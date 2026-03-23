@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../services/ambulance_broadcast_service.dart';
+import '../user/help_and_feedback_screen.dart';
 
 class AmbulanceDashboardScreen extends StatefulWidget {
   final bool isVerified;
@@ -37,9 +38,13 @@ class _AmbulanceDashboardScreenState extends State<AmbulanceDashboardScreen> {
           "Broadway Street, City, NY",
         ];
         
+        final newLocation = locations[(DateTime.now().millisecond / 250).toInt() % locations.length];
         setState(() {
-          _currentLocation = locations[(DateTime.now().millisecond / 250).toInt() % locations.length];
+          _currentLocation = newLocation;
         });
+        
+        // Call this to check for auto turn-off after 1 minute of no location change
+        AmbulanceBroadcastService().updateLocation(newLocation);
       }
       return mounted;
     });
@@ -85,8 +90,8 @@ class _AmbulanceDashboardScreenState extends State<AmbulanceDashboardScreen> {
         backgroundColor: const Color(0xFFE53935),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.menu, color: Colors.white),
-          onPressed: () {},
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
           'Ambulance Dashboard',
@@ -99,7 +104,14 @@ class _AmbulanceDashboardScreenState extends State<AmbulanceDashboardScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.settings, color: Colors.white),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const HelpAndFeedbackScreen(),
+                ),
+              );
+            },
           ),
         ],
       ),

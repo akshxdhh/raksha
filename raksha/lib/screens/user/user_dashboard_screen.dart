@@ -3,6 +3,9 @@ import '../../widgets/ambulance_alert_popup.dart';
 import '../../services/ambulance_broadcast_service.dart';
 import 'alerts_screen.dart';
 import 'history_screen.dart';
+import 'help_and_feedback_screen.dart';
+import 'nearby_hospitals_screen.dart';
+import 'nearby_ambulances_screen.dart';
 
 class UserDashboardScreen extends StatefulWidget {
   const UserDashboardScreen({super.key});
@@ -44,8 +47,51 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Confirm Emergency SOS'),
-        content: const Text(
-          'Are you sure you need emergency assistance? This will alert nearby ambulances.',
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Are you sure you need emergency assistance? This will alert nearby ambulances and hospitals.',
+            ),
+            const SizedBox(height: 16),
+            Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFF1E88E5).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Nearest Ambulance:',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text('City Ambulance Service', style: TextStyle(fontWeight: FontWeight.w500)),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      const Icon(Icons.location_on, size: 14, color: Colors.grey),
+                      const SizedBox(width: 4),
+                      const Text('0.6 km away', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      const Icon(Icons.timer, size: 14, color: Colors.grey),
+                      const SizedBox(width: 4),
+                      const Text('~2 min ETA', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  const Text('+1-333-111-1111', style: TextStyle(fontSize: 12, color: Color(0xFF1E88E5))),
+                ],
+              ),
+            ),
+          ],
         ),
         actions: [
           TextButton(
@@ -60,17 +106,26 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
               });
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text('SOS Activated! Waiting for ambulance...'),
+                  content: Text('SOS Activated! Ambulance is coming...'),
                   duration: Duration(seconds: 3),
                 ),
               );
             },
             child: const Text(
-              'Confirm',
+              'Confirm SOS',
               style: TextStyle(color: Colors.red),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  void _shareApp() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Sharing Raksha app...'),
+        duration: Duration(seconds: 2),
       ),
     );
   }
@@ -153,10 +208,56 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
                 ],
               ),
             ),
+            const PopupMenuItem(
+              value: 'share',
+              child: Row(
+                children: [
+                  Icon(Icons.share),
+                  SizedBox(width: 8),
+                  Text('Share'),
+                ],
+              ),
+            ),
+            const PopupMenuItem(
+              value: 'help',
+              child: Row(
+                children: [
+                  Icon(Icons.help_outline),
+                  SizedBox(width: 8),
+                  Text('Help & Feedback'),
+                ],
+              ),
+            ),
+            const PopupMenuItem(
+              value: 'rate',
+              child: Row(
+                children: [
+                  Icon(Icons.star),
+                  SizedBox(width: 8),
+                  Text('Rate Us'),
+                ],
+              ),
+            ),
           ],
           onSelected: (String value) {
             if (value == 'about') {
               _showAboutDialog();
+            } else if (value == 'share') {
+              _shareApp();
+            } else if (value == 'help') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const HelpAndFeedbackScreen(),
+                ),
+              );
+            } else if (value == 'rate') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const HelpAndFeedbackScreen(),
+                ),
+              );
             }
           },
         ),
@@ -168,29 +269,7 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        actions: [
-          Stack(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.notifications, color: Colors.white),
-                onPressed: () {},
-              ),
-              if (_selectedIndex == 1)
-                Positioned(
-                  right: 8,
-                  top: 8,
-                  child: Container(
-                    width: 10,
-                    height: 10,
-                    decoration: const BoxDecoration(
-                      color: Colors.red,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ],
+        actions: const [],
       ),
       body: IndexedStack(
         index: _selectedIndex,
@@ -422,7 +501,15 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
                         ),
                       ),
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const NearbyHospitalsScreen(),
+                            ),
+                          );
+                        },
                         child: const Text(
                           'View All',
                           style: TextStyle(
@@ -444,12 +531,32 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
                           name: 'City Hospital',
                           distance: '2.3 km',
                           phone: '+91 98765 43210',
+                          onTap: () => _showLocationDetails(
+                            title: 'City Hospital',
+                            subtitle: 'Nearby hospital',
+                            details: const [
+                              'Distance: 2.3 km',
+                              'Phone: +91 98765 43210',
+                              'Emergency wing: Available',
+                              'Open: 24/7',
+                            ],
+                          ),
                         ),
                         const SizedBox(width: 12),
                         _buildHospitalCard(
                           name: 'Care Medical Center',
                           distance: '3.1 km',
                           phone: '+91 98765 43211',
+                          onTap: () => _showLocationDetails(
+                            title: 'Care Medical Center',
+                            subtitle: 'Nearby hospital',
+                            details: const [
+                              'Distance: 3.1 km',
+                              'Phone: +91 98765 43211',
+                              'Emergency wing: Available',
+                              'Open: 24/7',
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -475,7 +582,15 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
                         ),
                       ),
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const NearbyAmbulancesScreen(),
+                            ),
+                          );
+                        },
                         child: const Text(
                           'View All',
                           style: TextStyle(
@@ -496,11 +611,29 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
                         _buildServiceCard(
                           name: 'Quick Ambulance',
                           availability: 'Available',
+                          onTap: () => _showLocationDetails(
+                            title: 'Quick Ambulance',
+                            subtitle: 'Nearby ambulance service',
+                            details: const [
+                              'Availability: Available',
+                              'Estimated response: 2-5 mins',
+                              'Phone support: 24/7',
+                            ],
+                          ),
                         ),
                         const SizedBox(width: 12),
                         _buildServiceCard(
                           name: 'Healthcare Ambulance',
                           availability: 'Available',
+                          onTap: () => _showLocationDetails(
+                            title: 'Healthcare Ambulance',
+                            subtitle: 'Nearby ambulance service',
+                            details: const [
+                              'Availability: Available',
+                              'Estimated response: 3-6 mins',
+                              'Phone support: 24/7',
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -519,104 +652,108 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
     required String name,
     required String distance,
     required String phone,
+    required VoidCallback onTap,
   }) {
-    return Container(
-      width: 160,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: const Color(0xFF1E88E5).withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 160,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
             ),
-            child: const Icon(
-              Icons.local_hospital,
-              color: Color(0xFF1E88E5),
-              size: 24,
+          ],
+        ),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFF1E88E5).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Icon(
+                Icons.local_hospital,
+                color: Color(0xFF1E88E5),
+                size: 24,
+              ),
             ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                name,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 4),
-              Row(
-                children: [
-                  Icon(
-                    Icons.location_on,
-                    size: 14,
-                    color: Colors.grey.shade600,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    distance,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              GestureDetector(
-                onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Calling $phone...'),
-                      duration: const Duration(seconds: 2),
-                    ),
-                  );
-                },
-                child: Row(
+                const SizedBox(height: 4),
+                Row(
                   children: [
                     Icon(
-                      Icons.call,
+                      Icons.location_on,
                       size: 14,
-                      color: Colors.blue.shade600,
+                      color: Colors.grey.shade600,
                     ),
                     const SizedBox(width: 4),
-                    Expanded(
-                      child: Text(
-                        phone,
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: Colors.blue.shade600,
-                          decoration: TextDecoration.underline,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                    Text(
+                      distance,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey.shade600,
                       ),
                     ),
                   ],
                 ),
-              ),
-            ],
-          ),
-        ],
+                const SizedBox(height: 8),
+                GestureDetector(
+                  onTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Calling $phone...'),
+                        duration: const Duration(seconds: 2),
+                      ),
+                    );
+                  },
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.call,
+                        size: 14,
+                        color: Colors.blue.shade600,
+                      ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          phone,
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: Colors.blue.shade600,
+                            decoration: TextDecoration.underline,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -624,70 +761,107 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
   Widget _buildServiceCard({
     required String name,
     required String availability,
+    required VoidCallback onTap,
   }) {
-    return Container(
-      width: 160,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: const Color(0xFF1E88E5).withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 160,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
             ),
-            child: const Icon(
-              Icons.local_hospital,
-              color: Color(0xFF1E88E5),
-              size: 24,
-            ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                name,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+          ],
+        ),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFF1E88E5).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
               ),
-              const SizedBox(height: 4),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.green.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Text(
-                  availability,
-                  style: TextStyle(
-                    fontSize: 11,
+              child: const Icon(
+                Icons.local_hospital,
+                color: Color(0xFF1E88E5),
+                size: 24,
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: const TextStyle(
+                    fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: Colors.green.shade700,
+                    color: Colors.black87,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 4),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.green.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    availability,
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green.shade700,
+                    ),
                   ),
                 ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showLocationDetails({
+    required String title,
+    required String subtitle,
+    required List<String> details,
+  }) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(subtitle),
+            const SizedBox(height: 16),
+            ...details.map(
+              (detail) => Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Text('• $detail'),
               ),
-            ],
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Close'),
           ),
         ],
       ),

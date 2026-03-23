@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../services/location_service.dart';
 import '../services/language_service.dart';
 import 'ambulance_driver/ambulance_verification_screen.dart';
 import 'user/enable_location_screen.dart';
+import 'user/user_dashboard_screen.dart';
 
 class ModeSelectionScreen extends StatelessWidget {
   const ModeSelectionScreen({super.key});
@@ -77,11 +79,20 @@ class ModeSelectionScreen extends StatelessWidget {
                   label: 'User Mode',
                   color: const Color(0xFF1E88E5),
                   icon: Icons.person,
-                  onPressed: () {
+                  onPressed: () async {
+                    final locationService = LocationService.instance;
+                    final hasPermission = await locationService.hasLocationPermission();
+
+                    if (!context.mounted) {
+                      return;
+                    }
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const EnableLocationScreen(),
+                        builder: (context) => hasPermission
+                            ? const UserDashboardScreen()
+                            : const EnableLocationScreen(),
                       ),
                     );
                   },

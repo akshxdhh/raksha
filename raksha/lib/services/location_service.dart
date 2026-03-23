@@ -25,12 +25,45 @@ class LocationService extends GetxController {
   String get currentAddress => _currentAddress.value;
   bool get locationPermissionGranted => _locationPermissionGranted.value;
 
-  Future<bool> requestLocationPermission() async {
+  Future<bool> isLocationServiceEnabled() async {
+    try {
+      return await Geolocator.isLocationServiceEnabled();
+    } catch (e) {
+      debugPrint('Error checking location service status: $e');
+      return false;
+    }
+  }
+
+  Future<bool> hasLocationPermission() async {
     try {
       final isServiceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!isServiceEnabled) {
         _locationPermissionGranted.value = false;
         _currentAddress.value = 'Location services are disabled';
+        return false;
+      }
+
+      final permission = await Geolocator.checkPermission();
+      final granted = permission == LocationPermission.whileInUse ||
+          permission == LocationPermission.always;
+
+      _locationPermissionGranted.value = granted;
+
+      if (!granted && permission == LocationPermission.deniedForever) {
+        _currentAddress.value = 'Location permission permanently denied';
+      }
+
+      return granted;
+    } catch (e) {
+      debugPrint('Error checking location permission: $e');
+      return false;
+    }
+  }
+
+  Future<bool> requestLocationPermission() async {
+    try {
+      final isServiceEnabled = await isLocationServiceEnabled();
+      if (!isServiceEnabled) {
         return false;
       }
 
