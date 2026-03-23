@@ -1,0 +1,188 @@
+import 'package:get/get.dart';
+
+class LanguageService extends GetxController {
+  static final LanguageService _instance = LanguageService._internal();
+
+  factory LanguageService() {
+    return _instance;
+  }
+
+  LanguageService._internal();
+
+  static LanguageService get instance => _instance;
+
+  final Rx<String> _selectedLanguage = 'English'.obs;
+
+  String get selectedLanguage => _selectedLanguage.value;
+
+  final Map<String, Map<String, String>> translations = {
+    'English': {
+      'welcome': 'Welcome',
+      'tap_to_start': 'TAP TO START',
+      'double_tap_to_close': 'DOUBLE TAP TO CLOSE',
+      'enable_location': 'Enable Location Access',
+      'allow_location': 'Allow Location Access',
+      'location_required': 'Allow "Raksha" to access your location',
+      'emergency_sos': 'EMERGENCY SOS',
+      'history': 'History',
+      'alerts': 'Alerts',
+      'user_mode': 'User Mode',
+      'ambulance_mode': 'Ambulance Mode',
+      'about': 'About',
+      'close': 'Close',
+      'cancel': 'Cancel',
+      'allow': 'Allow',
+      'not_now': 'Not Now',
+      'thank_you': 'Thank You!',
+      'low_ambulance_alert': 'Low Ambulance Alert',
+    },
+    'Spanish': {
+      'welcome': 'Bienvenido',
+      'tap_to_start': 'TOQUE PARA COMENZAR',
+      'double_tap_to_close': 'DOBLE TOQUE PARA CERRAR',
+      'enable_location': 'Habilitar Acceso de Ubicación',
+      'allow_location': 'Permitir Acceso de Ubicación',
+      'location_required': 'Permitir que "Raksha" acceda a su ubicación',
+      'emergency_sos': 'SOS DE EMERGENCIA',
+      'history': 'Historial',
+      'alerts': 'Alertas',
+      'user_mode': 'Modo Usuario',
+      'ambulance_mode': 'Modo Ambulancia',
+      'about': 'Acerca de',
+      'close': 'Cerrar',
+      'cancel': 'Cancelar',
+      'allow': 'Permitir',
+      'not_now': 'Ahora No',
+      'thank_you': '¡Gracias!',
+      'low_ambulance_alert': 'Alerta de Ambulancia Baja',
+    },
+    'French': {
+      'welcome': 'Bienvenue',
+      'tap_to_start': 'APPUYEZ POUR COMMENCER',
+      'double_tap_to_close': 'DOUBLE-CLIQUEZ POUR FERMER',
+      'enable_location': 'Activer l\'Acces a la Localisation',
+      'allow_location': 'Autoriser l\'Acces a la Localisation',
+      'location_required': 'Autoriser "Raksha" a acceder a votre localisation',
+      'emergency_sos': 'SOS D\'URGENCE',
+      'history': 'Historique',
+      'alerts': 'Alertes',
+      'user_mode': 'Mode Utilisateur',
+      'ambulance_mode': 'Mode Ambulance',
+      'about': 'À Propos',
+      'close': 'Fermer',
+      'cancel': 'Annuler',
+      'allow': 'Autoriser',
+      'not_now': 'Pas Maintenant',
+      'thank_you': 'Merci!',
+      'low_ambulance_alert': 'Alerte Ambulance Faible',
+    },
+    'German': {
+      'welcome': 'Willkommen',
+      'tap_to_start': 'ZUM STARTEN TIPPEN',
+      'double_tap_to_close': 'ZUM SCHLIESSEN DOPPELT TIPPEN',
+      'enable_location': 'Standortzugriff Aktivieren',
+      'allow_location': 'Standortzugriff Zulassen',
+      'location_required': 'Erlauben Sie "Raksha", auf Ihren Standort zuzugreifen',
+      'emergency_sos': 'NOTFALL-SOS',
+      'history': 'Verlauf',
+      'alerts': 'Benachrichtigungen',
+      'user_mode': 'Benutzermodus',
+      'ambulance_mode': 'Ambulanzmodus',
+      'about': 'Über',
+      'close': 'Schließen',
+      'cancel': 'Abbrechen',
+      'allow': 'Zulassen',
+      'not_now': 'Jetzt Nicht',
+      'thank_you': 'Danke!',
+      'low_ambulance_alert': 'Niedriger Ambulanzalarm',
+    },
+    'Hindi': {
+      'welcome': 'स्वागत है',
+      'tap_to_start': 'शुरू करने के लिए टैप करें',
+      'double_tap_to_close': 'बंद करने के लिए डबल टैप करें',
+      'enable_location': 'स्थान पहुंच सक्षम करें',
+      'allow_location': 'स्थान पहुंच की अनुमति दें',
+      'location_required': '"राक्षा" को आपके स्थान तक पहुंचने दें',
+      'emergency_sos': 'आपातकालीन एसओएस',
+      'history': 'इतिहास',
+      'alerts': 'सतर्कताएं',
+      'user_mode': 'उपयोगकर्ता मोड',
+      'ambulance_mode': 'एम्बुलेंस मोड',
+      'about': 'के बारे में',
+      'close': 'बंद करें',
+      'cancel': 'रद्द करें',
+      'allow': 'अनुमति दें',
+      'not_now': 'अभी नहीं',
+      'thank_you': 'धन्यवाद!',
+      'low_ambulance_alert': 'कम एम्बुलेंस चेतावनी',
+    },
+    'Tamil': {
+      'welcome': 'வரவேற்கிறோம்',
+      'tap_to_start': 'தொடங்க குண்டிக்கவும்',
+      'double_tap_to_close': 'மூட இரட்டை குண்டிக்கவும்',
+      'enable_location': 'இருப்பிடம் அணுகலை செயல்படுத்தவும்',
+      'allow_location': 'இருப்பிடம் அணுகலை அனுமதிக்கவும்',
+      'location_required': '"Raksha" உங்கள் இருப்பிடத்தை அணுக அனுமதிக்கவும்',
+      'emergency_sos': 'জরুরী SOS',
+      'history': 'வரலாறு',
+      'alerts': 'எச்சரிக்கைகள்',
+      'user_mode': 'ব্যবহারকারী মোড',
+      'ambulance_mode': 'অ্যাম্বুলেন্স মোড',
+      'about': 'பற்றி',
+      'close': 'மூடு',
+      'cancel': 'ரद்द செய்யவும்',
+      'allow': 'அனுமதி',
+      'not_now': 'இப்போது இல்லை',
+      'thank_you': 'நன்றி!',
+      'low_ambulance_alert': 'குறைந்த அ்যம்புலன்ஸ் எச்சரிக்கை',
+    },
+    'Bengali': {
+      'welcome': 'স্বাগতম',
+      'tap_to_start': 'শুরু করতে ট্যাপ করুন',
+      'double_tap_to_close': 'বন্ধ করতে ডাবল ট্যাপ করুন',
+      'enable_location': 'অবস্থান অ্যাক্সেস সক্ষম করুন',
+      'allow_location': 'অবস্থান অ্যাক্সেস অনুমতি দিন',
+      'location_required': '"রক্ষা" কে আপনার অবস্থানে অ্যাক্সেস করতে অনুমতি দিন',
+      'emergency_sos': 'জরুরী SOS',
+      'history': 'ইতিহাস',
+      'alerts': 'সতর্কতা',
+      'user_mode': 'ব্যবহারকারী মোড',
+      'ambulance_mode': 'অ্যাম্বুলেন্স মোড',
+      'about': 'সম্পর্কে',
+      'close': 'বন্ধ করুন',
+      'cancel': 'বাতিল করুন',
+      'allow': 'অনুমতি দিন',
+      'not_now': 'এখন নয়',
+      'thank_you': 'ধন্যবাদ!',
+      'low_ambulance_alert': 'কম অ্যাম্বুলেন্স সতর্কতা',
+    },
+    'Marathi': {
+      'welcome': 'स्वागत आहे',
+      'tap_to_start': 'सुरू करण्यासाठी टॅप करा',
+      'double_tap_to_close': 'बंद करण्यासाठी दुहेरी टॅप करा',
+      'enable_location': 'स्थान अ्यक्सेस सक्षम करा',
+      'allow_location': 'स्थान अ्यक्सेस अनुमति द्या',
+      'location_required': '"राक्षा" ला आपल्या स्थानात प्रवेश करू द्या',
+      'emergency_sos': 'आपातकालीन SOS',
+      'history': 'इतिहास',
+      'alerts': 'सतर्कता',
+      'user_mode': 'वापरकर्ता मोड',
+      'ambulance_mode': 'अ्यम्बुलन्स मोड',
+      'about': 'बद्दल',
+      'close': 'बंद करा',
+      'cancel': 'रद्द करा',
+      'allow': 'अनुमति द्या',
+      'not_now': 'आता नाही',
+      'thank_you': 'धन्यवाद!',
+      'low_ambulance_alert': 'कमी अ्यम्बुलन्स इशारा',
+    },
+  };
+
+  void setLanguage(String language) {
+    _selectedLanguage.value = language;
+  }
+
+  String translate(String key) {
+    return translations[_selectedLanguage.value]?[key] ?? key;
+  }
+}
