@@ -2,10 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'screens/mode_selection_screen.dart';
 import 'services/language_service.dart';
+import 'services/api_service.dart';
+
+
 
 void main() {
   Get.put(LanguageService());
   runApp(const RakshaApp());
+  Get.put(ApiService());
+  runApp(const MyApp());
 }
 
 class RakshaApp extends StatelessWidget {
